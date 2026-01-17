@@ -1,0 +1,38 @@
+name: Daily Stock Analysis
+
+on:
+  # 每天北京时间 14:30（UTC 10:00）执行，仅周一至周五
+  schedule:
+    - cron: '0 10 * * 1-5'
+  # 手动触发（测试用）
+  workflow_dispatch:
+
+jobs:
+  run-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Set environment variables
+        env:
+          STOCK_LIST: ${{ secrets.STOCK_LIST }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TUSHARE_TOKEN: ${{ secrets.TUSHARE_TOKEN }}
+          FEISHU_WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK_URL }}
+        run: |
+          echo "STOCK_LIST=${STOCK_LIST}" > .env
+          echo "GEMINI_API_KEY=${GEMINI_API_KEY}" >> .env
+          echo "TUSHARE_TOKEN=${TUSHARE_TOKEN}" >> .env
+          echo "FEISHU_WEBHOOK_URL=${FEISHU_WEBHOOK_URL}" >> .env
+
+      - name: Run analysis
+        run: python main.py --market-review
