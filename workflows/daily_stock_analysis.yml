@@ -1,8 +1,9 @@
 name: Daily Stock Analysis
 
 on:
-  # 每天北京时间 14:30（UTC 10:00）执行，仅周一至周五
+  # 每天北京时间9:30 和 18:00（UTC 10:00）执行，仅周一至周五
   schedule:
+    - cron: '30 1 * * 1-5'
     - cron: '0 10 * * 1-5'
   # 手动触发（测试用）
   workflow_dispatch:
